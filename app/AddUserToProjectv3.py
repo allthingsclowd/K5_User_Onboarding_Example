@@ -301,8 +301,12 @@ def adduser_to_K5(idtoken, globaltoken, regionaltoken, contractid, contract,
                 userDetails = (userDetails[0], userDetails[1],
                                userDetails[2], userDetails[3],
                                userDetails[4], status)
+                print "Debug User Details", userDetails
+                print "Debug User Project - ", userProject
                 newGroup = create_new_group(
                     globaltoken, contractid, region, userProject)
+
+                print "DEBUG - NEW GROUP DETAILS - ", newGroup
 
                 # if the new group was created successfully
                 if newGroup == (userProject + '_Admin'):

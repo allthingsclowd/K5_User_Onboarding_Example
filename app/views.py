@@ -48,12 +48,12 @@ def index():
         adminPassword = request.form.get('k5password', None)
         contract = request.form.get('k5contract', None)
         region = request.form.get('k5region', None)
-        print adminUser, adminPassword, contract, region
+        #print adminUser, adminPassword, contract, region
         try:
             regional_token = K5API.get_unscoped_token(
                 adminUser, adminPassword, contract, region)
-            print regional_token
-            print regional_token.json()
+            #print regional_token
+            #print regional_token.json()
             defaultid = regional_token.json()['token']['project'].get('id')
             global_token = K5API.get_globally_scoped_token(
              adminUser, adminPassword, contract, defaultid, region)
@@ -82,15 +82,15 @@ def index():
 
             else:
                 return render_template('hello-flask-login.html',
-                                       title='K5 User Onboarding Demo (Beta)')
+                                       title='K5 User Onboarding Portal (Demo)')
         except:
 
             return render_template('hello-flask-login.html',
-                                   title='K5 User Onboarding Demo (Beta)')
+                                   title='K5 User Onboarding Portal (Demo)')
     else:
 
         return render_template('hello-flask-login.html',
-                               title='K5 User Onboarding Demo (Beta)')
+                               title='K5 User Onboarding Portal (Demo)')
 
 
 @app.route('/adduser', methods=['GET', 'POST'])
@@ -117,31 +117,46 @@ def adduser():
                     adminUser, adminPassword, contract)
             except:
                 return render_template('hello-flask-login.html',
-                                       title='K5 User Onboarding Demo (Beta)')
+                                       title='K5 User Onboarding Portal (Demo)')
 
             newregionaltoken = regional_token.headers['X-Subject-Token']
             newglobaltoken = global_token.headers['X-Subject-Token']
             email = request.form.get('k5useremail', None)
             userProject = request.form.get('k5project', None)
+            userProjectA = unicode(userProject) + unicode('a')
+            userProjectB = unicode(userProject) + unicode('b')
             try:
-                result = K5User.adduser_to_K5(id_token,
+                resultprojecta = K5User.adduser_to_K5(id_token,
                                               newglobaltoken,
                                               newregionaltoken,
                                               contractid,
                                               contract,
                                               region,
                                               email,
-                                              userProject)
+                                              userProjectA)
+                resultprojectb = K5User.adduser_to_K5(id_token,
+                                              newglobaltoken,
+                                              newregionaltoken,
+                                              contractid,
+                                              contract,
+                                              region,
+                                              email,
+                                              userProjectB)
                 #print result
             except:
                 return render_template('hello-flask-login.html',
-                                       title='K5 User Onboarding Demo (Beta)')
+                                       title='K5 User Onboarding Portal (Demo)')
 
-            if result is not None:
+            if resultprojecta is not None:
                 #print result
-                session['newuserlogin'] = result[2]
-                session['newuserpassword'] = result[4]
-                session['newuserstatus'] = result[5]
+                session['newuserlogin'] = resultprojecta[2]
+                session['newuserpassword'] = resultprojecta[4]
+                session['newuserstatusa'] = resultprojecta[5]
+                session['newuserprojecta'] = userProjectA
+                session['newuserstatusb'] = resultprojectb[5]
+                session['newuserprojectb'] = userProjectB
+                session['newusercontract'] = contract
+                session['newuserregion'] = region
 
             return redirect(url_for('userstatus'))
         else:
@@ -158,9 +173,9 @@ def adduser():
         #                     "Bubbles",
         #                     "Bubbles.json", region).json())
         report_bubbles = [{ "name": "Test"}]
-        print "\n\n\nLoading JSON Details..................\n\n\n"
-        print "The actual JSON File.................."
-        print report_bubbles
+       #print "\n\n\nLoading JSON Details..................\n\n\n"
+       #print "The actual JSON File.................."
+       #print report_bubbles
         return render_template('hello-flask-adduser.html',
                                title='K5 Add User',
                                bubbles=report_bubbles)
@@ -182,13 +197,24 @@ def userstatus():
     if request.method == 'GET':
         username = session['newuserlogin']
         userpassword = session['newuserpassword']
-        userstatus = session['newuserstatus']
+        userstatusa = session['newuserstatusa']
+        userprojecta = session['newuserprojecta']
+        userstatusb = session['newuserstatusb']
+        userprojectb = session['newuserprojectb']
+        usercontract = session['newusercontract']
+        usercontractid = session['contractid']
+        userregion = session['newuserregion']
         return render_template('hello-flask-result.html',
                                title='K5 New User Details',
-                               userstatus=('Status : ' + userstatus + ' | Username : ' +
-                                           username +
-                                           ' | Password : ' +
-                                           userpassword))
+                               userstatus=( 'Username : ' + username +
+                                                    ' | Password : ' + userpassword +
+                                                    ' | Project 1 : ' + userprojecta +
+                                                    ' | Status : ' + userstatusa +
+                                                    ' | Project 2 : ' + userprojectb +
+                                                    ' | Status : ' + userstatusb +
+                                                    ' | Contract : ' + usercontract +
+                                                    ' | Contract ID : ' + usercontractid +
+                                                    ' | Region : ' + userregion))
 
 
 @app.route('/logout')

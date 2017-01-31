@@ -450,6 +450,7 @@ def create_new_group(global_k5token, contractid, region, project):
     """
     try:
         groupname = project + '_Admin'
+        #print "DEBUG - New groupname", groupname
 
         groupURL = 'https://identity.gls.cloud.global.fujitsu.com/v3/groups'
         response = requests.post(groupURL,
@@ -460,6 +461,8 @@ def create_new_group(global_k5token, contractid, region, project):
                                         "domain_id": contractid,
                                         "name": groupname
                                         }})
+        #print "Debug - new group api response ", response
+        #print "Debug - json ", response.json()
         groupDetail = response.json()
 
         return groupDetail['group']['name']
