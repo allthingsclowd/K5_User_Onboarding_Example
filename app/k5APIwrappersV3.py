@@ -537,6 +537,7 @@ def add_new_user(idtoken, contract, region, userDetails):
     """
     try:
         centralIdUrl = 'https://k5-apiportal.paas.cloud.global.fujitsu.com/API/v1/api/users'
+        print "DEBUG : ", centralIdUrl, idtoken, contract, region, userDetails
 
         response = requests.post(centralIdUrl,
                                  headers={'Token': idtoken,
@@ -551,8 +552,11 @@ def add_new_user(idtoken, contract, region, userDetails):
                                        "language_code": "en",
                                        "role_code": "01"
                                        })
+        print response
+        print response.json()
         return response
     except:
+        print 'Failed to add new user'
         return 'Failed to add new user'
 
 
@@ -563,7 +567,7 @@ def main():
     Returns:
         TYPE: Description
     """
-    pass
+    #portal_token =
 
 
 if __name__ == "__main__":
