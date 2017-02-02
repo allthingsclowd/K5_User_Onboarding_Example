@@ -33,7 +33,8 @@
 # from k5contractsettingsV1 import *
 
 from random import choice
-from k5APIwrappersV3 import (
+
+from k5APIwrappersV19 import (
                         get_itemid,
                         add_new_user,
                         get_keystoneobject_list,
@@ -125,7 +126,9 @@ def adduser_to_K5(idtoken, globaltoken, regionaltoken, contractid, contract,
     else:
 
         # make rest api call to add new user
+        print "\n\nDEBUG : Adding New User - \n\n", idtoken, contractid, region, userDetails
         result = add_new_user(idtoken, contractid, region, userDetails)
+        print "\n\nDEBUG : Result \n\n"
 
         # if the result from the above call is successful
         if result.status_code == 200:
