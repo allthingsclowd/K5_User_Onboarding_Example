@@ -1006,7 +1006,10 @@ def create_new_group(global_k5token, contractid, region, project):
                                         "domain_id": contractid,
                                         "name": groupname
                                         }})
+        print "Debug Inputs -> ", groupname, contractid, groupURL, project, region, global_k5token
+        print "create_new_group - DEBUG response -> ", response
         groupDetail = response.json()
+        print "Debug : Detailed JSON Response -> ", groupDetail
 
         return groupDetail['group']['name']
     except:
