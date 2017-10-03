@@ -43,6 +43,10 @@ def index():
 
     """
     session['regionaltoken'] = None
+    if request.headers.get('x-forwarded-proto') != 'https':
+        secure_url=request.url.replace("http://","https://")
+    return redirect(secure_url)
+
     if request.method == 'POST':
         adminUser = request.form.get('k5username', None)
         adminPassword = request.form.get('k5password', None)

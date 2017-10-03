@@ -413,8 +413,11 @@ def adduser_to_K5(idtoken, globaltoken, regionaltoken, contractid, contract,
             # group to project, assign user to project
 
             # create new project
+            print "Debug: About to create a new project"
+            print regionaltoken, contractid, region, userProject
             result = create_new_project(
                 regionaltoken, contractid, region, userProject)
+            print result.json()
 
             # check here for project creation status
             if result.status_code == 201:
