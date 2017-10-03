@@ -8,18 +8,20 @@
     Github: https://github.com/allthingscloud
     Blog: https://allthingscloud.eu
 """
-from flask import render_template, session, request, redirect, url_for, json
+from flask import flash, render_template, session, request, redirect, url_for, json, make_response
+
 from app import app
 
-import os
+import os,binascii 
 import AddUserToProjectv3 as K5User
-#import k5APIwrappersV3 as K5API
+
 import k5APIwrappersV19 as K5API
 from functools import wraps
-#from k5APIwrappersV13 import upload_object_to_container, \
-#                        view_items_in_storage_container, download_item_in_storage_container
+
 
 app.secret_key = os.urandom(24)
+
+JSESSION_ID = binascii.b2a_hex(os.urandom(16))
 
 def login_required(f):
     """Summary - Decorator used to ensure that routes channeled through
@@ -45,7 +47,7 @@ def index():
     session['regionaltoken'] = None
     if request.headers.get('x-forwarded-proto') != 'https':
         secure_url=request.url.replace("http://","https://")
-    return redirect(secure_url)
+        return redirect(secure_url)
 
     if request.method == 'POST':
         adminUser = request.form.get('k5username', None)
@@ -92,9 +94,11 @@ def index():
             return render_template('hello-flask-login.html',
                                    title='K5 User Onboarding Portal (Demo)')
     else:
+        resp = make_response(render_template('hello-flask-login.html',
+                              title='K5 User Onboarding Portal (Demo)'))
+        resp.set_cookie('JSESSIONID',JSESSION_ID)
+        return resp
 
-        return render_template('hello-flask-login.html',
-                               title='K5 User Onboarding Portal (Demo)')
 
 
 @app.route('/adduser', methods=['GET', 'POST'])
